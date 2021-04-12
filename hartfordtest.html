@@ -1,0 +1,194 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fly to a location based on scroll position</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<style>
+#map {
+position: fixed;
+width: 50%;
+}
+#features {
+width: 50%;
+margin-left: 50%;
+font-family: sans-serif;
+overflow-y: scroll;
+background-color: #fafafa;
+}
+section {
+padding: 25px 50px;
+line-height: 25px;
+border-bottom: 1px solid #ddd;
+opacity: 0.25;
+font-size: 13px;
+}
+section.active {
+opacity: 1;
+}
+section:last-child {
+border-bottom: none;
+margin-bottom: 350px;
+}
+</style>
+ 
+<div id="map"></div>
+<div id="features">
+<section id="baker" class="active">
+<h3>Hartford, Connecticut</h3>
+<p>
+A Virtual Walk Through
+</p>
+</section>
+<section id="aldgate">
+<h3>Windsor Street Urban Renewal</h3>
+<p>
+1960-1966
+</p>
+</section>
+<section id="london-bridge">
+<h3>Construction of the Highway System</h3>
+<p>
+I-84 and I-91
+</p>
+</section>
+<section id="woolwich">
+<h3>Blue Hills</h3>
+<p>
+Center of Hartford's Jamaican community
+</p>
+</section>
+<section id="gloucester">
+<h3>Keney Park</h3>
+<p>
+Geographic barrier to mobility during 20th century population shifts
+</p>
+</section>
+<section id="caulfield-gardens">
+<h3>The North Meadows</h3>
+<p>
+Area not zoned for residential use. History of squatting and largely devoid of population
+</p>
+</section>
+<section id="telegraph">
+<h3>The South End</h3>
+<p>
+Center of Italian community
+</p>
+</section>
+<section id="charing-cross">
+<h3>Bellevue Square</h3>
+<p>
+Major public housing project constructed during the 1940s.
+</p>
+<small id="citation">
+Citations
+<a href="google.com">here</a>
+</small>
+</section>
+</div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiamJrMTMwMDQiLCJhIjoiY2tpOTVzeWpkMDN4ZTJ5bjg3OTBzN21udiJ9.gJQPNCgsOp2w9ECuu_fj2A';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/streets-v11',
+center: [-72.678390, 41.768195],
+zoom: 10,
+bearing: 0,
+pitch: 0
+});
+ 
+var chapters = {
+'baker': {
+bearing: 0,
+center: [-72.678390, 41.768195],
+zoom: 10,
+pitch: 0
+},
+'aldgate': {
+duration: 6000,
+center: [ -72.672161, 41.772867],
+bearing: 0,
+zoom: 15.5,
+pitch: 20
+},
+'london-bridge': {
+bearing: 0,
+center: [-72.670136, 41.767549],
+zoom: 12.3,
+speed: 0.6,
+pitch: 40
+},
+'woolwich': {
+bearing: 90,
+center: [-72.697862, 41.791957],
+zoom: 15,
+speed: 0.6,
+pitch: 40
+},
+'gloucester': {
+bearing: 90,
+center: [-72.691407, 41.791470],
+zoom: 14.5,
+pitch: 20,
+speed: 0.5
+},
+'caulfield-gardens': {
+bearing: 90,
+center: [-72.651789, 41.797237],
+zoom: 14
+},
+'telegraph': {
+bearing: 0,
+center: [-72.675079, 41.735444],
+zoom: 12,
+pitch: 40
+},
+'charing-cross': {
+bearing: 0,
+center: [-72.674045, 41.78002],
+zoom: 16.5,
+pitch: 20
+}
+};
+ 
+// On every scroll event, check which element is on screen
+window.onscroll = function () {
+var chapterNames = Object.keys(chapters);
+for (var i = 0; i < chapterNames.length; i++) {
+var chapterName = chapterNames[i];
+if (isElementOnScreen(chapterName)) {
+setActiveChapter(chapterName);
+break;
+}
+}
+};
+ 
+var activeChapterName = 'baker';
+function setActiveChapter(chapterName) {
+if (chapterName === activeChapterName) return;
+ 
+map.flyTo(chapters[chapterName]);
+ 
+document.getElementById(chapterName).setAttribute('class', 'active');
+document.getElementById(activeChapterName).setAttribute('class', '');
+ 
+activeChapterName = chapterName;
+}
+ 
+function isElementOnScreen(id) {
+var element = document.getElementById(id);
+var bounds = element.getBoundingClientRect();
+return bounds.top < window.innerHeight && bounds.bottom > 0;
+}
+</script>
+ 
+</body>
+</html>
